@@ -7,10 +7,10 @@ SetWorkingDir %A_ScriptDir%
 
 Gui, New, Caption, %name%
 Gui, Font, S11 CDefault, Arial
-Gui, Add, Text, x12 y10 w370 h20 , Введите имя файла (скрипт должен быть запущен):
+Gui, Add, Text, x12 y10 w370 h20 , Р’РІРµРґРёС‚Рµ РёРјСЏ С„Р°Р№Р»Р° (СЃРєСЂРёРїС‚ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р·Р°РїСѓС‰РµРЅ):
 Gui, Add, Edit, x12 y30 w354 h25 +Center vMyEdit gUnpackEnter
-Gui, Add, CheckBox, x12 y56 w354 h25 +Checked vIndent, Расставить табуляцию
-Gui, Add, Button, x12 y83 w354 h38 gUnpack, Распаковать
+Gui, Add, CheckBox, x12 y56 w354 h25 +Checked vIndent, Р Р°СЃСЃС‚Р°РІРёС‚СЊ С‚Р°Р±СѓР»СЏС†РёСЋ
+Gui, Add, Button, x12 y83 w354 h38 gUnpack, Р Р°СЃРїР°РєРѕРІР°С‚СЊ
 Gui, Font, S8 CDefault, Arial
 Gui, Add, Link, x162 y122 w71 h17, <a href="http://blast.hk/threads/15597/">BlastHack</a>
 Gui, Show, h140 w383, %name%
@@ -25,14 +25,14 @@ Unpack:
     GuiControlGet, Indent
     if(!strlen(MyEdit))
     {
-        MsgBox, 16, %name%, Укажите название процесса для распаковки.
+        MsgBox, 16, %name%, РЈРєР°Р¶РёС‚Рµ РЅР°Р·РІР°РЅРёРµ РїСЂРѕС†РµСЃСЃР° РґР»СЏ СЂР°СЃРїР°РєРѕРІРєРё.
         return
     }
     if(!RegExMatch(MyEdit, "\.exe"))
         MyEdit .= ".exe"
 	if(MyEdit == A_ScriptName)
 	{
-		MsgBox, 67, %name%, Исходники этого скрипта можно скачать с форума`nОткрыть форум (Yes) или всё равно продолжить распаковку (No)?
+		MsgBox, 67, %name%, РСЃС…РѕРґРЅРёРєРё СЌС‚РѕРіРѕ СЃРєСЂРёРїС‚Р° РјРѕР¶РЅРѕ СЃРєР°С‡Р°С‚СЊ СЃ С„РѕСЂСѓРјР°`nРћС‚РєСЂС‹С‚СЊ С„РѕСЂСѓРј (Yes) РёР»Рё РІСЃС‘ СЂР°РІРЅРѕ РїСЂРѕРґРѕР»Р¶РёС‚СЊ СЂР°СЃРїР°РєРѕРІРєСѓ (No)?
 		IfMsgBox, Yes
 		{
 			Run % "http://blast.hk/threads/15597/"
@@ -49,7 +49,7 @@ Unpack:
     }
 	if(!strlen(processId))
 	{
-		MsgBox, 16, %name%, Процесс %MyEdit% не найден.
+		MsgBox, 16, %name%, РџСЂРѕС†РµСЃСЃ %MyEdit% РЅРµ РЅР°Р№РґРµРЅ.
 		return
 	}
     mem := new _ClassMemory(processId)
@@ -57,24 +57,24 @@ Unpack:
     {
 		DllCall("OpenProcess", "UInt", 0x001F0FFF, "Int", False, "UInt", processId, "Ptr")
 		err := DllCall("GetLastError", "UInt")
-		errs := {5: ": Доступ запрещен.", 6: ": The handle is invalid."}
+		errs := {5: ": Р”РѕСЃС‚СѓРї Р·Р°РїСЂРµС‰РµРЅ.", 6: ": The handle is invalid."}
 		if(err == 5 || err == 6)
 		{
-			MsgBox, 52, %name%, Нет доступа к процессу %MyEdit%. Возможно, он запущен с более высокими привилегиями, чем Unpacker.`n`nПерезапустить Unpacker с повышенными привилегиями?
+			MsgBox, 52, %name%, РќРµС‚ РґРѕСЃС‚СѓРїР° Рє РїСЂРѕС†РµСЃСЃСѓ %MyEdit%. Р’РѕР·РјРѕР¶РЅРѕ, РѕРЅ Р·Р°РїСѓС‰РµРЅ СЃ Р±РѕР»РµРµ РІС‹СЃРѕРєРёРјРё РїСЂРёРІРёР»РµРіРёСЏРјРё, С‡РµРј Unpacker.`n`nРџРµСЂРµР·Р°РїСѓСЃС‚РёС‚СЊ Unpacker СЃ РїРѕРІС‹С€РµРЅРЅС‹РјРё РїСЂРёРІРёР»РµРіРёСЏРјРё?
 			IfMsgBox, Yes
 			{
 				Run *RunAs %A_ScriptFullPath% ,, UseErrorLevel
 				return
 			}
 		}
-		MsgBox, 16, %name%, % "Ошибка при открытии процесса #" err . errs[err]
+		MsgBox, 16, %name%, % "РћС€РёР±РєР° РїСЂРё РѕС‚РєСЂС‹С‚РёРё РїСЂРѕС†РµСЃСЃР° #" err . errs[err]
         return
     }
     pattern := mem.hexStringToPattern("3B 20 3C 43 4F 4D 50 49 4C 45 52 3A")
     addr := mem.processPatternScan(,, pattern*)
     if(!addr || addr == -1)
     {
-        MsgBox, 52, %name%, Ошибка при чтении процесса %MyEdit%`nФайл не является AHK_L скриптом, либо закриптован`n`nЕсли вы уверены, что это AHK скрипт, то отправьте его мне в личные сообщения на форуме для анализа.`nОткрыть форум с профилем?
+        MsgBox, 52, %name%, РћС€РёР±РєР° РїСЂРё С‡С‚РµРЅРёРё РїСЂРѕС†РµСЃСЃР° %MyEdit%`nР¤Р°Р№Р» РЅРµ СЏРІР»СЏРµС‚СЃСЏ AHK_L СЃРєСЂРёРїС‚РѕРј, Р»РёР±Рѕ Р·Р°РєСЂРёРїС‚РѕРІР°РЅ`n`nР•СЃР»Рё РІС‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ СЌС‚Рѕ AHK СЃРєСЂРёРїС‚, С‚Рѕ РѕС‚РїСЂР°РІСЊС‚Рµ РµРіРѕ РјРЅРµ РІ Р»РёС‡РЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ РЅР° С„РѕСЂСѓРјРµ РґР»СЏ Р°РЅР°Р»РёР·Р°.`nРћС‚РєСЂС‹С‚СЊ С„РѕСЂСѓРј СЃ РїСЂРѕС„РёР»РµРј?
 		IfMsgBox, Yes
 			Run % "http://blast.hk/conversations/add?to=asdzxcjqwe"
         return
@@ -83,10 +83,10 @@ Unpack:
     Gui, Hide
     Gui, New, Caption, %name%
     Gui, Font, S11 CDefault Bold, Arial
-    Gui, Add, Text, x12 y10 w320 h20, Распаковка в процессе...
+    Gui, Add, Text, x12 y10 w320 h20, Р Р°СЃРїР°РєРѕРІРєР° РІ РїСЂРѕС†РµСЃСЃРµ...
     Gui, Font, S11 CDefault, Arial
-    Gui, Add, Text, x12 y30 w320 h20, Это окно будет закрыто после распаковки
-    Gui, Add, Text, x12 y50 w450 h20, Код будет сохранен в файл %sName%
+    Gui, Add, Text, x12 y30 w320 h20, Р­С‚Рѕ РѕРєРЅРѕ Р±СѓРґРµС‚ Р·Р°РєСЂС‹С‚Рѕ РїРѕСЃР»Рµ СЂР°СЃРїР°РєРѕРІРєРё
+    Gui, Add, Text, x12 y50 w450 h20, РљРѕРґ Р±СѓРґРµС‚ СЃРѕС…СЂР°РЅРµРЅ РІ С„Р°Р№Р» %sName%
     Gui, Show, h83 w364, %name%
     length := 0
     while(true)
@@ -149,8 +149,8 @@ update()
 {
     Gui, New, Caption, %name%
     Gui, Font, S11 CDefault Bold, Arial
-    Gui, Add, Text, x62 y20 w200 h20, Загрузка обновления...
-    Gui, Add, Text, x57 y37 w190 h20, Не закрывайте это окно
+    Gui, Add, Text, x62 y20 w200 h20, Р—Р°РіСЂСѓР·РєР° РѕР±РЅРѕРІР»РµРЅРёСЏ...
+    Gui, Add, Text, x57 y37 w190 h20, РќРµ Р·Р°РєСЂС‹РІР°Р№С‚Рµ СЌС‚Рѕ РѕРєРЅРѕ
     Gui, Show, h76 w293, %name%
     URLDownloadToFile, http://rumist.aiq.ru/unpacker/unpacker.exe, unpacker.exe.dl
     batfile := "@echo off`ntaskkill /f /im " A_ScriptName "`ndel /f /q " A_ScriptName "`nren unpacker.exe.dl unpacker.exe`nstart unpacker.exe`ndel /f /q __update.bat"
